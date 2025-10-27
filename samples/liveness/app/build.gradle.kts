@@ -14,7 +14,7 @@ dependencies {
     val livenessVersion = "1.6.0"
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation("com.amplifyframework.ui:liveness:$livenessVersion")
+    implementation("com.github.easi6dev:amplify-ui-android:tada-liveness-main-SNAPSHOT")
 
     implementation(libs.amplify.core.kotlin)
     implementation(libs.amplify.api)
