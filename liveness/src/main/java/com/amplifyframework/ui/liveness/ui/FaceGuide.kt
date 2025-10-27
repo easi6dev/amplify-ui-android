@@ -37,19 +37,17 @@ import androidx.compose.ui.unit.dp
 import com.amplifyframework.ui.liveness.ui.helper.VideoViewportSize
 
 @Composable
-internal fun FaceGuide(
+fun FaceGuide(
     modifier: Modifier,
     faceGuideRect: RectF?,
     videoViewportSize: VideoViewportSize,
     backgroundColor: Color = Color.White
 ) {
-
     val scaledBoundingRect = faceGuideRect?.let {
         videoViewportSize.getScaledBoundingRect(it)
     } ?: return
 
     Canvas(modifier.graphicsLayer(alpha = 0.99f)) {
-
         drawRect(
             color = backgroundColor,
             size = size
@@ -93,7 +91,7 @@ internal fun FaceGuide(
 
 @Preview
 @Composable
-internal fun FaceGuidePreview() {
+fun FaceGuidePreview() {
     Box(Modifier.size(1080.dp, 1920.dp).background(color = Color.Red)) {
         FaceGuide(
             modifier = Modifier.fillMaxSize(),

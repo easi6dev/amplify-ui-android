@@ -42,9 +42,7 @@ import androidx.compose.ui.unit.sp
 import com.amplifyframework.ui.liveness.ml.FaceDetector
 import com.amplifyframework.ui.liveness.model.LivenessCheckState
 
-@Composable internal fun InstructionMessage(
-    livenessCheckState: LivenessCheckState
-) {
+@Composable fun InstructionMessage(livenessCheckState: LivenessCheckState) {
     val instructionText = livenessCheckState.instructionId?.let { stringResource(it) } ?: return
     if (livenessCheckState.isActionable) {
         FaceOvalInstructionMessage(message = instructionText)
@@ -52,11 +50,9 @@ import com.amplifyframework.ui.liveness.model.LivenessCheckState
         InstructionMessage(message = instructionText, showProgress = true)
     }
 }
+
 @Composable
-private fun InstructionMessage(
-    message: String,
-    showProgress: Boolean
-) {
+fun InstructionMessage(message: String, showProgress: Boolean) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -71,7 +67,7 @@ private fun InstructionMessage(
             CircularProgressIndicator(
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp),
-                strokeWidth = 2.dp,
+                strokeWidth = 2.dp
             )
             Spacer(modifier = Modifier.size(8.dp))
         }
@@ -85,10 +81,7 @@ private fun InstructionMessage(
 }
 
 @Composable
-private fun FaceOvalInstructionMessage(
-    message: String
-) {
-
+fun FaceOvalInstructionMessage(message: String) {
     val isTooClose = message == stringResource(FaceDetector.FaceOvalPosition.TOO_CLOSE.instructionStringRes)
     val isInitialCenterFace =
         LivenessCheckState.Initial.withStartViewMessage().instructionId?.let { stringResource(it) == message } == true
@@ -131,14 +124,15 @@ private fun FaceOvalInstructionMessage(
 @Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun InstructionMessagePreview() {
+fun InstructionMessagePreview() {
     LivenessPreviewContainer {
         InstructionMessage("Success", true)
     }
 }
+
 @Preview
 @Composable
-private fun InstructionMessageProgressPreview() {
+fun InstructionMessageProgressPreview() {
     LivenessPreviewContainer {
         InstructionMessage("Success", true)
     }
@@ -147,7 +141,7 @@ private fun InstructionMessageProgressPreview() {
 @Preview
 @Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
-private fun FaceOvalInstructionMessagePreview() {
+fun FaceOvalInstructionMessagePreview() {
     LivenessPreviewContainer {
         FaceOvalInstructionMessage("Move closer")
     }
@@ -155,7 +149,7 @@ private fun FaceOvalInstructionMessagePreview() {
 
 @Preview
 @Composable
-private fun InstructionMessageMultiLinePreview() {
+fun InstructionMessageMultiLinePreview() {
     LivenessPreviewContainer {
         InstructionMessage(
             message = "Instruction message \n multiline",
@@ -166,12 +160,12 @@ private fun InstructionMessageMultiLinePreview() {
 
 @Preview
 @Composable
-private fun InstructionMessageCustomThemePreview() {
+fun InstructionMessageCustomThemePreview() {
     LivenessPreviewContainer(
         colorScheme = lightColorScheme(
             primary = Color.White,
             background = Color.Blue,
-            onBackground = Color.Yellow,
+            onBackground = Color.Yellow
         ),
         typography = Typography(
             bodyMedium = TextStyle(

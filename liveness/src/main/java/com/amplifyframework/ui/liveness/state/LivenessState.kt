@@ -39,15 +39,15 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlin.concurrent.schedule
 
-internal data class InitialStreamFace(val faceRect: RectF, val timestamp: Long)
+data class InitialStreamFace(val faceRect: RectF, val timestamp: Long)
 
-internal data class LivenessState(
+data class LivenessState(
     val sessionId: String,
     val context: Context,
     val disableStartView: Boolean,
     val onCaptureReady: () -> Unit,
     val onSessionError: (FaceLivenessDetectionException, Boolean) -> Unit,
-    val onFinalEventsSent: () -> Unit,
+    val onFinalEventsSent: () -> Unit
 ) {
     var videoViewportSize: VideoViewportSize? by mutableStateOf(null)
     var livenessCheckState by mutableStateOf<LivenessCheckState>(
@@ -62,14 +62,16 @@ internal data class LivenessState(
     var showingStartView by mutableStateOf(!disableStartView)
     var loadingCameraPreview by mutableStateOf(false)
 
-    private var initialStreamFace: InitialStreamFace? = null
+    var initialStreamFace: InitialStreamFace? = null
+
     @VisibleForTesting
     var faceMatchOvalStart: Long? = null
+
     @VisibleForTesting
     var faceMatchOvalEnd: Long? = null
-    private var initialFaceOvalIou = -1f
-    private var faceOvalMatchTimer: TimerTask? = null
-    private var detectedFaceMatchedOval = false
+    var initialFaceOvalIou = -1f
+    var faceOvalMatchTimer: TimerTask? = null
+    var detectedFaceMatchedOval = false
 
     @VisibleForTesting
     var readyForOval = false
@@ -220,8 +222,11 @@ internal data class LivenessState(
 
         if (!initialFaceDistanceCheckPassed) {
             val faceDistance = FaceDetector.calculateFaceDistance(
-                leftEye, rightEye, mouth,
-                LivenessCoordinator.TARGET_WIDTH, LivenessCoordinator.TARGET_HEIGHT
+                leftEye,
+                rightEye,
+                mouth,
+                LivenessCoordinator.TARGET_WIDTH,
+                LivenessCoordinator.TARGET_HEIGHT
             )
             if (faceDistance >= faceTargetChallenge!!.faceTargetMatching.faceDistanceThresholdMin) {
                 livenessCheckState =

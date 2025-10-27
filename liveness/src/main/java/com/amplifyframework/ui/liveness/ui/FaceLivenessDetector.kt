@@ -111,7 +111,7 @@ fun FaceLivenessDetector(
     disableStartView: Boolean = false,
     onComplete: Action,
     onError: Consumer<FaceLivenessDetectionException>,
-    challengeOptions: ChallengeOptions = ChallengeOptions(),
+    challengeOptions: ChallengeOptions = ChallengeOptions()
 ) {
     val scope = rememberCoroutineScope()
     val key = DetectorStateKey(sessionId, region, credentialsProvider)
@@ -180,7 +180,7 @@ fun FaceLivenessDetector(
 }
 
 @Composable
-internal fun ChallengeView(
+fun ChallengeView(
     key: Any,
     sessionId: String,
     region: String,
@@ -263,13 +263,12 @@ internal fun ChallengeView(
             }
 
             if (livenessState.showingStartView) {
-
                 if (livenessState.loadingCameraPreview) {
                     CircularProgressIndicator(
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier
                             .align(Alignment.Center),
-                        strokeWidth = 2.dp,
+                        strokeWidth = 2.dp
                     )
                 }
 
@@ -443,7 +442,7 @@ internal fun ChallengeView(
     }
 }
 
-internal data class DetectorStateKey(
+data class DetectorStateKey(
     val sessionId: String,
     val region: String,
     val credentialsProvider: AWSCredentialsProvider<AWSCredentials>?
@@ -453,28 +452,25 @@ data class ChallengeOptions(
     val faceMovementAndLight: LivenessChallenge.FaceMovementAndLight = LivenessChallenge.FaceMovementAndLight,
     val faceMovement: LivenessChallenge.FaceMovement = LivenessChallenge.FaceMovement()
 ) {
-    internal fun getLivenessChallenge(challengeType: FaceLivenessChallengeType): LivenessChallenge =
-        when (challengeType) {
-            FaceLivenessChallengeType.FaceMovementAndLightChallenge -> faceMovementAndLight
-            FaceLivenessChallengeType.FaceMovementChallenge -> faceMovement
-        }
+    fun getLivenessChallenge(challengeType: FaceLivenessChallengeType): LivenessChallenge = when (challengeType) {
+        FaceLivenessChallengeType.FaceMovementAndLightChallenge -> faceMovementAndLight
+        FaceLivenessChallengeType.FaceMovementChallenge -> faceMovement
+    }
 
     /**
      * @return true if all of the challenge options are configured to use the same camera configuration
      */
-    internal fun hasOneCameraConfigured(): Boolean =
-        listOf(
-            faceMovementAndLight,
-            faceMovement
-        ).all { it.camera == faceMovementAndLight.camera }
+    fun hasOneCameraConfigured(): Boolean = listOf(
+        faceMovementAndLight,
+        faceMovement
+    ).all { it.camera == faceMovementAndLight.camera }
 }
 
-sealed class LivenessChallenge(
-    open val camera: Camera = Camera.Front
-) {
-    data class FaceMovement(override val camera: Camera = Camera.Front) : LivenessChallenge(
-        camera = camera
-    )
+sealed class LivenessChallenge(open val camera: Camera = Camera.Front) {
+    data class FaceMovement(override val camera: Camera = Camera.Front) :
+        LivenessChallenge(
+            camera = camera
+        )
     data object FaceMovementAndLight : LivenessChallenge()
 }
 
@@ -483,20 +479,19 @@ sealed class Camera {
     data object Back : Camera()
 }
 
-private fun FaceLivenessSession?.isFaceMovementAndLightChallenge(): Boolean =
+fun FaceLivenessSession?.isFaceMovementAndLightChallenge(): Boolean =
     this?.challengeType == FaceLivenessChallengeType.FaceMovementAndLightChallenge
 
-private fun shouldDisplayInstruction(
+fun shouldDisplayInstruction(
     livenessCheckState: LivenessCheckState,
     challengeType: FaceLivenessChallengeType?
-): Boolean =
-    if (challengeType == null) {
-        true
-    } else if (livenessCheckState ==
-        LivenessCheckState.Running.withFaceOvalPosition(FaceDetector.FaceOvalPosition.MATCHED) &&
-        challengeType == FaceLivenessChallengeType.FaceMovementChallenge
-    ) {
-        false
-    } else {
-        true
-    }
+): Boolean = if (challengeType == null) {
+    true
+} else if (livenessCheckState ==
+    LivenessCheckState.Running.withFaceOvalPosition(FaceDetector.FaceOvalPosition.MATCHED) &&
+    challengeType == FaceLivenessChallengeType.FaceMovementChallenge
+) {
+    false
+} else {
+    true
+}

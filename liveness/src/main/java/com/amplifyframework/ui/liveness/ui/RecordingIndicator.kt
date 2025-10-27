@@ -46,17 +46,15 @@ import androidx.compose.ui.unit.sp
 import com.amplifyframework.ui.liveness.R
 
 @Composable
-internal fun RecordingIndicator(modifier: Modifier = Modifier) {
+fun RecordingIndicator(modifier: Modifier = Modifier) {
     RecordingIndicator(
         label = stringResource(R.string.amplify_ui_liveness_challenge_recording_indicator_label),
         modifier = modifier
     )
 }
+
 @Composable
-private fun RecordingIndicator(
-    label: String,
-    modifier: Modifier = Modifier
-) {
+fun RecordingIndicator(label: String, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(7.dp, Alignment.CenterVertically),
@@ -86,7 +84,7 @@ private fun RecordingIndicator(
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun RecordingIndicatorPreview() {
+fun RecordingIndicatorPreview() {
     LivenessPreviewContainer {
         RecordingIndicator("REC")
     }
@@ -94,7 +92,7 @@ private fun RecordingIndicatorPreview() {
 
 @Preview
 @Composable
-private fun RecordingIndicatorLongLabelPreview() {
+fun RecordingIndicatorLongLabelPreview() {
     LivenessPreviewContainer {
         RecordingIndicator("RECORDING")
     }
@@ -102,11 +100,11 @@ private fun RecordingIndicatorLongLabelPreview() {
 
 @Preview
 @Composable
-private fun RecordingIndicatorCustomThemePreview() {
+fun RecordingIndicatorCustomThemePreview() {
     LivenessPreviewContainer(
         colorScheme = lightColorScheme(
             background = Color.Blue,
-            onBackground = Color.Yellow,
+            onBackground = Color.Yellow
         ),
         typography = Typography(
             labelMedium = TextStyle(

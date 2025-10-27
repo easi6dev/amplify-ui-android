@@ -34,8 +34,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import org.tensorflow.lite.Interpreter
 
-internal class FaceDetector(private val livenessState: LivenessState) {
-    private val anchors = generateAnchors()
+class FaceDetector(val livenessState: LivenessState) {
+    val anchors = generateAnchors()
 
     fun getBoundingBoxes(
         outputBoxes: Array<Array<FloatArray>>,
@@ -211,7 +211,7 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         return RectF(left, top, right, faceBottom)
     }
 
-    private fun generateAnchors(): List<Anchor> {
+    fun generateAnchors(): List<Anchor> {
         val newAnchors = mutableListOf<Anchor>()
         var layerId = 0
         while (layerId < strides.size) {
@@ -227,7 +227,9 @@ internal class FaceDetector(private val livenessState: LivenessState) {
             ) {
                 val scale = calculateScale(
                     MIN_SCALE,
-                    MAX_SCALE, lastSameStrideLayer, strides.size
+                    MAX_SCALE,
+                    lastSameStrideLayer,
+                    strides.size
                 )
                 for (aspectRatioId in 0 until ASPECT_RATIOS_SIZE) {
                     aspectRatios.add(1.0f)
@@ -238,7 +240,9 @@ internal class FaceDetector(private val livenessState: LivenessState) {
                 } else {
                     calculateScale(
                         MIN_SCALE,
-                        MAX_SCALE, lastSameStrideLayer + 1, strides.size
+                        MAX_SCALE,
+                        lastSameStrideLayer + 1,
+                        strides.size
                     )
                 }
                 scales.add(sqrt(scale * scaleNext))
@@ -270,26 +274,17 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         return newAnchors
     }
 
-    private fun calculateScale(
-        minScale: Float,
-        maxScale: Float,
-        strideIndex: Int,
-        numStrides: Int
-    ): Float {
-        return minScale + (maxScale - minScale) * 1.0f * strideIndex / (numStrides - 1.0f)
-    }
+    fun calculateScale(minScale: Float, maxScale: Float, strideIndex: Int, numStrides: Int): Float =
+        minScale + (maxScale - minScale) * 1.0f * strideIndex / (numStrides - 1.0f)
 
-    private fun computeSigmoid(inputValue: Float): Float {
+    fun computeSigmoid(inputValue: Float): Float {
         var finalInputValue = max(inputValue, -100f)
         finalInputValue = min(finalInputValue, 100f)
         finalInputValue *= -1
         return 1.0f / (1.0f + exp(finalInputValue))
     }
 
-    private fun weightedNonMaxSuppression(
-        indexedScores: List<IndexedScore>,
-        detections: List<Detection>
-    ): List<Detection> {
+    fun weightedNonMaxSuppression(indexedScores: List<IndexedScore>, detections: List<Detection>): List<Detection> {
         val remainedIndexedScores = indexedScores.toMutableList()
         val remained = mutableListOf<IndexedScore>()
         val candidates = mutableListOf<IndexedScore>()
@@ -414,7 +409,7 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         return outputLocations
     }
 
-    private fun overlapSimilarity(rect1: RectF, rect2: RectF): Float {
+    fun overlapSimilarity(rect1: RectF, rect2: RectF): Float {
         if (!RectF.intersects(rect1, rect2)) {
             return 0.0f
         }
@@ -430,9 +425,9 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         }
     }
 
-    private class Anchor(val xCenter: Float, val yCenter: Float, val h: Float, val w: Float)
-    internal class Landmark(val x: Float, val y: Float)
-    internal class Detection(
+    class Anchor(val xCenter: Float, val yCenter: Float, val h: Float, val w: Float)
+    class Landmark(val x: Float, val y: Float)
+    class Detection(
         val location: RectF,
         val leftEye: Landmark,
         val rightEye: Landmark,
@@ -442,7 +437,7 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         val rightEar: Landmark,
         val score: Float
     )
-    private class IndexedScore(val index: Int, val score: Float)
+    class IndexedScore(val index: Int, val score: Float)
 
     enum class FaceOvalPosition(val instructionStringRes: Int) {
         MATCHED(R.string.amplify_ui_liveness_challenge_instruction_hold_face_during_freshness),
@@ -453,17 +448,17 @@ internal class FaceDetector(private val livenessState: LivenessState) {
     }
 
     companion object {
-        private const val MIN_SUPPRESSION_THRESHOLD = 0.3f
-        private val strides = listOf(8, 16, 16, 16)
-        private const val ASPECT_RATIOS_SIZE = 1
-        private const val MIN_SCALE = 0.1484375f
-        private const val MAX_SCALE = 0.75f
-        private const val ANCHOR_OFFSET_X = 0.5f
-        private const val ANCHOR_OFFSET_Y = 0.5f
-        private const val INPUT_SIZE_HEIGHT = 128
-        private const val INPUT_SIZE_WIDTH = 128
-        private const val ALPHA = 2.0f
-        private const val GAMMA = 1.8f
+        const val MIN_SUPPRESSION_THRESHOLD = 0.3f
+        val strides = listOf(8, 16, 16, 16)
+        const val ASPECT_RATIOS_SIZE = 1
+        const val MIN_SCALE = 0.1484375f
+        const val MAX_SCALE = 0.75f
+        const val ANCHOR_OFFSET_X = 0.5f
+        const val ANCHOR_OFFSET_Y = 0.5f
+        const val INPUT_SIZE_HEIGHT = 128
+        const val INPUT_SIZE_WIDTH = 128
+        const val ALPHA = 2.0f
+        const val GAMMA = 1.8f
         const val X_SCALE = 128f
         const val Y_SCALE = 128f
         const val H_SCALE = 128f
@@ -488,7 +483,8 @@ internal class FaceDetector(private val livenessState: LivenessState) {
             val modelInputStream = FileInputStream(modelFileDescriptor.fileDescriptor)
             val modelByteBuffer = modelInputStream.channel.map(
                 FileChannel.MapMode.READ_ONLY,
-                modelFileDescriptor.startOffset, modelFileDescriptor.declaredLength
+                modelFileDescriptor.startOffset,
+                modelFileDescriptor.declaredLength
             )
             return Interpreter(modelByteBuffer)
         }
@@ -564,19 +560,17 @@ internal class FaceDetector(private val livenessState: LivenessState) {
         }
 
         @VisibleForTesting(VisibleForTesting.PRIVATE)
-        internal fun calculatePupilDistance(leftEye: Landmark, rightEye: Landmark): Float {
-            return sqrt((leftEye.x - rightEye.x).pow(2) + (leftEye.y - rightEye.y).pow(2))
-        }
+        fun calculatePupilDistance(leftEye: Landmark, rightEye: Landmark): Float =
+            sqrt((leftEye.x - rightEye.x).pow(2) + (leftEye.y - rightEye.y).pow(2))
 
         @VisibleForTesting(VisibleForTesting.PRIVATE)
-        internal fun calculateFaceHeight(leftEye: Landmark, rightEye: Landmark, mouth: Landmark):
-            Float {
+        fun calculateFaceHeight(leftEye: Landmark, rightEye: Landmark, mouth: Landmark): Float {
             val eyeCenterX = (leftEye.x + rightEye.x) / 2
             val eyeCenterY = (leftEye.y + rightEye.y) / 2
             return sqrt((eyeCenterX - mouth.x).pow(2) + (eyeCenterY - mouth.y).pow(2))
         }
 
-        private fun getStaticOvalWidth(width: Float, height: Float, enlargeFactor: Int = 1): Float {
+        fun getStaticOvalWidth(width: Float, height: Float, enlargeFactor: Int = 1): Float {
             val r = 0.8f * enlargeFactor
             var newWidth = width
             if (width > height) {

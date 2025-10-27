@@ -22,7 +22,7 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 
 @Composable
-internal fun LivenessPreviewContainer(
+fun LivenessPreviewContainer(
     colorScheme: ColorScheme = LivenessColorScheme.default(),
     shapes: Shapes = MaterialTheme.shapes,
     typography: Typography = MaterialTheme.typography,

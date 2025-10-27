@@ -32,16 +32,16 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.Rot90Op
 
-internal class FrameAnalyzer(context: Context, private val livenessState: LivenessState) : ImageAnalysis.Analyzer {
+class FrameAnalyzer(context: Context, val livenessState: LivenessState) : ImageAnalysis.Analyzer {
 
-    private val tfLite = FaceDetector.loadModel(context)
-    private val tfImageBuffer = TensorImage(DataType.UINT8)
-    private var tfImageProcessor: ImageProcessor? = null
+    val tfLite = FaceDetector.loadModel(context)
+    val tfImageBuffer = TensorImage(DataType.UINT8)
+    var tfImageProcessor: ImageProcessor? = null
 
-    private var cachedBitmap: Bitmap? = null
-    private var faceDetector = FaceDetector(livenessState)
+    var cachedBitmap: Bitmap? = null
+    var faceDetector = FaceDetector(livenessState)
 
-    private val logger = Amplify.Logging.forNamespace("Liveness")
+    val logger = Amplify.Logging.forNamespace("Liveness")
 
     override fun analyze(image: ImageProxy) {
         try {
@@ -54,7 +54,7 @@ internal class FrameAnalyzer(context: Context, private val livenessState: Livene
         }
     }
 
-    private fun attemptAnalyze(image: ImageProxy) {
+    fun attemptAnalyze(image: ImageProxy) {
         if (cachedBitmap == null) {
             cachedBitmap = createBitmap(image.width, image.height)
         }
@@ -110,7 +110,7 @@ internal class FrameAnalyzer(context: Context, private val livenessState: Livene
         }
     }
 
-    private fun getImageProcessor(imageRotationDegrees: Int): ImageProcessor {
+    fun getImageProcessor(imageRotationDegrees: Int): ImageProcessor {
         val existingImageProcessor = tfImageProcessor
         if (existingImageProcessor != null) return existingImageProcessor
 

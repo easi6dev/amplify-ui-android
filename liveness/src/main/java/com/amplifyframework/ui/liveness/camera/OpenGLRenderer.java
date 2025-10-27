@@ -49,7 +49,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-final class OpenGLRenderer {
+final public class OpenGLRenderer {
     private static final String TAG = "OpenGLRenderer";
     private static final boolean DEBUG = false;
 

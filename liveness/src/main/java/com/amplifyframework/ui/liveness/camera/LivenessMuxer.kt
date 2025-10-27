@@ -25,22 +25,18 @@ import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 
 @WorkerThread
-internal class LivenessMuxer(
-    private val tempOutputFile: File,
-    outputFormat: MediaFormat,
-    private val onMuxedSegment: OnMuxedSegment
-) {
-    private val muxerRandomAccessFile = RandomAccessFile(
+class LivenessMuxer(val tempOutputFile: File, outputFormat: MediaFormat, val onMuxedSegment: OnMuxedSegment) {
+    val muxerRandomAccessFile = RandomAccessFile(
         tempOutputFile.apply { createNewFile() },
         "r"
     )
 
-    private val videoTrack: Int
-    private var currentVideoStartTime: Long
-    private var currentBytePosition = 0L
-    private var lastChunkNotificationTimestamp = 0L // start ready to notify
+    val videoTrack: Int
+    var currentVideoStartTime: Long
+    var currentBytePosition = 0L
+    var lastChunkNotificationTimestamp = 0L // start ready to notify
 
-    private val muxer = MediaMuxer(
+    val muxer = MediaMuxer(
         tempOutputFile.toString(),
         MediaMuxer.OutputFormat.MUXER_OUTPUT_WEBM
     ).apply {
@@ -49,7 +45,7 @@ internal class LivenessMuxer(
         currentVideoStartTime = System.currentTimeMillis()
     }
 
-    private val logger = Amplify.Logging.forNamespace("Liveness")
+    val logger = Amplify.Logging.forNamespace("Liveness")
 
     /*
     Attempt to notify listener that chunked data is available if minimum chunk interval has exceeded
@@ -79,7 +75,7 @@ internal class LivenessMuxer(
             muxer.stop()
             muxer.release()
         } catch (e: Exception) {
-            // don't crash if muxer encounters internal error
+            // don't crash if muxer encounters  error
         }
 
         // send partial chunk
@@ -95,7 +91,7 @@ internal class LivenessMuxer(
      * only sends new byte data.
      * @return true if chunk notified
      */
-    private fun notifyChunk(): Boolean {
+    fun notifyChunk(): Boolean {
         try {
             muxerRandomAccessFile.apply {
                 try {

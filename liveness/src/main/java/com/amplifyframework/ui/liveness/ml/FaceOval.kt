@@ -19,11 +19,9 @@ import android.graphics.RectF
 import com.amplifyframework.predictions.aws.models.FaceTargetChallenge
 import kotlin.math.max
 
-internal object FaceOval {
+object FaceOval {
 
-    fun createBoundingRect(
-        ovalInfo: FaceTargetChallenge
-    ): RectF {
+    fun createBoundingRect(ovalInfo: FaceTargetChallenge): RectF {
         val left = ovalInfo.targetCenterX - (ovalInfo.targetWidth / 2)
         val top = ovalInfo.targetCenterY - (ovalInfo.targetHeight / 2)
         val right = left + ovalInfo.targetWidth
@@ -40,10 +38,7 @@ internal object FaceOval {
         return RectF(newLeft, newTop, newRight, newBottom)
     }
 
-    fun convertMirroredLandmark(
-        landmark: FaceDetector.Landmark,
-        fullViewWidth: Int
-    ): FaceDetector.Landmark {
+    fun convertMirroredLandmark(landmark: FaceDetector.Landmark, fullViewWidth: Int): FaceDetector.Landmark {
         val newX = max(0f, fullViewWidth - 1 - landmark.x)
         val newY = landmark.y
         return FaceDetector.Landmark(newX, newY)

@@ -35,12 +35,11 @@ object LivenessColorScheme {
     @ReadOnlyComposable
     fun default() = default(isSystemInDarkTheme())
 
-    private fun default(isSystemInDarkTheme: Boolean) =
-        if (isSystemInDarkTheme) {
-            Defaults.darkColorScheme
-        } else {
-            Defaults.lightColorScheme
-        }
+    fun default(isSystemInDarkTheme: Boolean) = if (isSystemInDarkTheme) {
+        Defaults.darkColorScheme
+    } else {
+        Defaults.lightColorScheme
+    }
 
     /**
      * Default Liveness [ColorScheme] Values
@@ -72,7 +71,7 @@ object LivenessColorScheme {
             error = Color(0xFFEF8F8F),
             onError = Color(0xFF0D1926),
             errorContainer = Color(0xFF043495),
-            onErrorContainer = Color(0xFFE6EEFE),
+            onErrorContainer = Color(0xFFE6EEFE)
         )
     }
 }

@@ -19,20 +19,19 @@ import androidx.compose.ui.graphics.Color
 import com.amplifyframework.predictions.aws.models.ColorDisplayInformation
 import com.amplifyframework.predictions.aws.models.RgbColor
 
-internal fun RgbColor.toComposeColor(alpha: Int) =
-    Color(
-        red = red,
-        green = green,
-        blue = blue,
-        alpha = alpha
-    )
+fun RgbColor.toComposeColor(alpha: Int) = Color(
+    red = red,
+    green = green,
+    blue = blue,
+    alpha = alpha
+)
 
-internal sealed class SceneType {
+sealed class SceneType {
     object DownScroll : SceneType()
     object Flat : SceneType()
 }
 
-internal data class FreshnessColorScene(
+data class FreshnessColorScene(
     val startTime: Long,
     val endTime: Long,
     val currentColor: ColorDisplayInformation,
@@ -40,7 +39,7 @@ internal data class FreshnessColorScene(
     val sceneType: SceneType
 )
 
-internal data class FreshnessColorFrame(
+data class FreshnessColorFrame(
     val sceneType: SceneType,
     val currentColor: Color,
     val previousColor: Color?,

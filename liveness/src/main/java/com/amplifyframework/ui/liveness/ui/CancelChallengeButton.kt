@@ -34,10 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.amplifyframework.ui.liveness.R
 
 @Composable
-internal fun CancelChallengeButton(
-    modifier: Modifier = Modifier,
-    action: () -> Unit
-) {
+fun CancelChallengeButton(modifier: Modifier = Modifier, action: () -> Unit) {
     CancelChallengeButton(
         modifier = modifier,
         closeContentDescription = stringResource(
@@ -48,11 +45,7 @@ internal fun CancelChallengeButton(
 }
 
 @Composable
-private fun CancelChallengeButton(
-    modifier: Modifier = Modifier,
-    closeContentDescription: String,
-    action: () -> Unit,
-) {
+fun CancelChallengeButton(modifier: Modifier = Modifier, closeContentDescription: String, action: () -> Unit) {
     IconButton(
         onClick = action,
         modifier = modifier
@@ -70,7 +63,7 @@ private fun CancelChallengeButton(
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun CancelChallengeButtonPreview() {
+fun CancelChallengeButtonPreview() {
     LivenessPreviewContainer {
         CancelChallengeButton(closeContentDescription = "") {}
     }
@@ -78,7 +71,7 @@ private fun CancelChallengeButtonPreview() {
 
 @Preview
 @Composable
-private fun CancelChallengeButtonCustomThemePreview() {
+fun CancelChallengeButtonCustomThemePreview() {
     LivenessPreviewContainer(
         colorScheme = lightColorScheme(
             background = Color.Blue,

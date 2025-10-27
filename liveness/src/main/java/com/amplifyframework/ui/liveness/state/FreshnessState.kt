@@ -22,24 +22,24 @@ import com.amplifyframework.ui.liveness.model.FreshnessColorScene
 import com.amplifyframework.ui.liveness.model.SceneType
 import com.amplifyframework.ui.liveness.model.toComposeColor
 
-internal typealias OnColorDisplayed = (
+typealias OnColorDisplayed = (
     currentColor: RgbColor,
     previousColor: RgbColor,
     sequenceNumber: Int,
     colorStartTime: Long
 ) -> Unit
 
-internal data class FreshnessState(
+data class FreshnessState(
     val freshnessColors: List<ColorDisplayInformation>,
     val onColorDisplayed: OnColorDisplayed,
     val onComplete: () -> Unit
 ) {
 
-    private val freshnessColorScript: List<FreshnessColorScene>
+    val freshnessColorScript: List<FreshnessColorScene>
 
-    private var playbackStarted = -1L
-    private var currentSceneIndex = 0
-    private var lastDisplayedSceneIndex = -1 // used to track onColorDisplayed callback
+    var playbackStarted = -1L
+    var currentSceneIndex = 0
+    var lastDisplayedSceneIndex = -1 // used to track onColorDisplayed callback
     var playbackEnded = false
 
     fun nextFrame(currentTime: Long): FreshnessColorFrame? {

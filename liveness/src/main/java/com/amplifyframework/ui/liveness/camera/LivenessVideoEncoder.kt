@@ -30,14 +30,14 @@ import java.io.File
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-internal class LivenessVideoEncoder private constructor(
+class LivenessVideoEncoder constructor(
     width: Int,
     height: Int,
     bitrate: Int,
-    private val frameRate: Int,
-    private val keyframeInterval: Int,
-    private val outputFile: File,
-    private val onMuxedSegment: OnMuxedSegment
+    val frameRate: Int,
+    val keyframeInterval: Int,
+    val outputFile: File,
+    val onMuxedSegment: OnMuxedSegment
 ) {
 
     companion object {
@@ -54,23 +54,21 @@ internal class LivenessVideoEncoder private constructor(
             framerate: Int,
             keyframeInterval: Int,
             onMuxedSegment: OnMuxedSegment
-        ): LivenessVideoEncoder? {
-            return try {
-                LivenessVideoEncoder(
-                    width,
-                    height,
-                    bitrate,
-                    framerate,
-                    keyframeInterval,
-                    createTempOutputFile(context),
-                    onMuxedSegment
-                )
-            } catch (e: Exception) {
-                null
-            }
+        ): LivenessVideoEncoder? = try {
+            LivenessVideoEncoder(
+                width,
+                height,
+                bitrate,
+                framerate,
+                keyframeInterval,
+                createTempOutputFile(context),
+                onMuxedSegment
+            )
+        } catch (e: Exception) {
+            null
         }
 
-        private fun createTempOutputFile(context: Context) = File(
+        fun createTempOutputFile(context: Context) = File(
             File(
                 context.cacheDir,
                 "amplify_liveness_temp"
@@ -87,7 +85,7 @@ internal class LivenessVideoEncoder private constructor(
         )
     }
 
-    private val format = MediaFormat.createVideoFormat(MIME_TYPE, width, height).apply {
+    val format = MediaFormat.createVideoFormat(MIME_TYPE, width, height).apply {
         setInteger(
             MediaFormat.KEY_COLOR_FORMAT,
             MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
@@ -97,20 +95,16 @@ internal class LivenessVideoEncoder private constructor(
         setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, keyframeInterval)
     }
 
-    private val encoderHandler = Handler(HandlerThread(TAG).apply { start() }.looper)
+    val encoderHandler = Handler(HandlerThread(TAG).apply { start() }.looper)
 
-    private val encoder = MediaCodec.createEncoderByType(MIME_TYPE).apply {
+    val encoder = MediaCodec.createEncoderByType(MIME_TYPE).apply {
         configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
         setCallback(
             object : MediaCodec.Callback() {
                 override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {
                 }
 
-                override fun onOutputBufferAvailable(
-                    codec: MediaCodec,
-                    index: Int,
-                    info: MediaCodec.BufferInfo
-                ) {
+                override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
                     handleFrame(index, info)
                 }
 
@@ -125,9 +119,9 @@ internal class LivenessVideoEncoder private constructor(
     }
     val inputSurface = encoder.createInputSurface()
 
-    private var encoding = false
-    private var livenessMuxer: LivenessMuxer? = null
-    private val logger = Amplify.Logging.forNamespace("Liveness")
+    var encoding = false
+    var livenessMuxer: LivenessMuxer? = null
+    val logger = Amplify.Logging.forNamespace("Liveness")
 
     init {
         encoder.start()
@@ -140,7 +134,6 @@ internal class LivenessVideoEncoder private constructor(
     var framesSinceSyncRequest = 0
 
     @WorkerThread
-
     fun handleFrame(outputBufferId: Int, info: MediaCodec.BufferInfo) {
         try {
             encoder.getOutputBuffer(outputBufferId)?.let { byteBuffer ->

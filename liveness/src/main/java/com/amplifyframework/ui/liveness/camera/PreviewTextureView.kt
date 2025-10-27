@@ -25,21 +25,14 @@ import androidx.core.content.ContextCompat
 import com.amplifyframework.ui.liveness.util.rotationDegrees
 
 @SuppressLint("ViewConstructor", "Recycle")
-internal class PreviewTextureView(
-    context: Context,
-    renderer: OpenGLRenderer
-) : TextureView(context) {
+class PreviewTextureView(context: Context, renderer: OpenGLRenderer) : TextureView(context) {
 
-    private var surface: Surface? = null
-    internal var hasReceivedUpdate = false
+    var surface: Surface? = null
+    var hasReceivedUpdate = false
 
     init {
         surfaceTextureListener = object : SurfaceTextureListener {
-            override fun onSurfaceTextureAvailable(
-                surfaceTexture: SurfaceTexture,
-                width: Int,
-                height: Int
-            ) {
+            override fun onSurfaceTextureAvailable(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
                 surface = Surface(surfaceTexture).also {
                     renderer.attachPreviewSurface(
                         it,
@@ -55,11 +48,7 @@ internal class PreviewTextureView(
                 }
             }
 
-            override fun onSurfaceTextureSizeChanged(
-                surfaceTexture: SurfaceTexture,
-                width: Int,
-                height: Int
-            ) {
+            override fun onSurfaceTextureSizeChanged(surfaceTexture: SurfaceTexture, width: Int, height: Int) {
                 surface = Surface(surfaceTexture).also {
                     renderer.attachPreviewSurface(
                         it,

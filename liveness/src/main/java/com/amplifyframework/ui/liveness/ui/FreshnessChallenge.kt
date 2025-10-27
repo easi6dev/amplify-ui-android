@@ -36,7 +36,7 @@ import com.amplifyframework.ui.liveness.model.SceneType
 import com.amplifyframework.ui.liveness.state.FreshnessState
 
 @Composable
-internal fun nextFrameMillis(): State<Long> {
+fun nextFrameMillis(): State<Long> {
     val millisState = remember { mutableStateOf(System.currentTimeMillis()) }
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(Unit) {
@@ -52,7 +52,7 @@ internal fun nextFrameMillis(): State<Long> {
 }
 
 @Composable
-internal fun FreshnessChallenge(
+fun FreshnessChallenge(
     key: Any,
     modifier: Modifier,
     colors: List<ColorDisplayInformation>,

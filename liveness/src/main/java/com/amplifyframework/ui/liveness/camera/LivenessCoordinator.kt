@@ -62,9 +62,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 
-internal typealias OnMuxedSegment = (bytes: ByteArray, timestamp: Long) -> Unit
-internal typealias OnChallengeComplete = () -> Unit
-internal typealias OnFreshnessColorDisplayed = (
+typealias OnMuxedSegment = (bytes: ByteArray, timestamp: Long) -> Unit
+typealias OnChallengeComplete = () -> Unit
+typealias OnFreshnessColorDisplayed = (
     currentColor: RgbColor,
     previousColor: RgbColor,
     sequenceNumber: Int,
@@ -72,21 +72,21 @@ internal typealias OnFreshnessColorDisplayed = (
 ) -> Unit
 
 @SuppressLint("UnsafeOptInUsageError")
-internal class LivenessCoordinator(
+class LivenessCoordinator(
     val context: Context,
-    private val lifecycleOwner: LifecycleOwner,
-    private val sessionId: String,
-    private val region: String,
-    private val credentialsProvider: AWSCredentialsProvider<AWSCredentials>?,
-    private val disableStartView: Boolean,
-    private val challengeOptions: ChallengeOptions,
-    private val onChallengeComplete: OnChallengeComplete,
+    val lifecycleOwner: LifecycleOwner,
+    val sessionId: String,
+    val region: String,
+    val credentialsProvider: AWSCredentialsProvider<AWSCredentials>?,
+    val disableStartView: Boolean,
+    val challengeOptions: ChallengeOptions,
+    val onChallengeComplete: OnChallengeComplete,
     val onChallengeFailed: Consumer<FaceLivenessDetectionException>
 ) {
 
-    private val attemptCounter = AttemptCounter()
-    private val analysisExecutor = Executors.newSingleThreadExecutor()
-    private val coordinatorScope = MainScope() + CoroutineName("LivenessCoordinator")
+    val attemptCounter = AttemptCounter()
+    val analysisExecutor = Executors.newSingleThreadExecutor()
+    val coordinatorScope = MainScope() + CoroutineName("LivenessCoordinator")
 
     val livenessState = LivenessState(
         sessionId = sessionId,
@@ -97,7 +97,7 @@ internal class LivenessCoordinator(
         onFinalEventsSent = this::processFinalEventsSent
     )
 
-    private val preview = Preview.Builder().apply {
+    val preview = Preview.Builder().apply {
         Camera2Interop.Extender(this).apply {
             setCaptureRequestOption(
                 CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
@@ -107,9 +107,9 @@ internal class LivenessCoordinator(
         setTargetResolution(TARGET_RESOLUTION_SIZE)
     }.build()
 
-    private val analyzer = FrameAnalyzer(context, livenessState)
+    val analyzer = FrameAnalyzer(context, livenessState)
 
-    private val analysis = ImageAnalysis.Builder().apply {
+    val analysis = ImageAnalysis.Builder().apply {
         Camera2Interop.Extender(this).apply {
             setCaptureRequestOption(
                 CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
@@ -122,7 +122,7 @@ internal class LivenessCoordinator(
         setAnalyzer(analysisExecutor, analyzer)
     }
 
-    private val encoder = LivenessVideoEncoder.create(
+    val encoder = LivenessVideoEncoder.create(
         context = context,
         width = TARGET_WIDTH,
         height = TARGET_HEIGHT,
@@ -134,7 +134,7 @@ internal class LivenessCoordinator(
         }
     ) ?: throw IllegalStateException("Failed to start the encoder.")
 
-    private val renderer = OpenGLRenderer()
+    val renderer = OpenGLRenderer()
         .apply {
             attachInputPreview(preview)
             attachOutputSurface(
@@ -146,7 +146,7 @@ internal class LivenessCoordinator(
 
     val previewTextureView = PreviewTextureView(context, renderer)
 
-    private var disconnectEventReceived = false
+    var disconnectEventReceived = false
 
     init {
         startLivenessSession()
@@ -157,7 +157,7 @@ internal class LivenessCoordinator(
         }
     }
 
-    private fun launchCamera(camera: Camera) {
+    fun launchCamera(camera: Camera) {
         coordinatorScope.launch {
             delay(5_000)
             if (!previewTextureView.hasReceivedUpdate) {
@@ -198,7 +198,7 @@ internal class LivenessCoordinator(
         }
     }
 
-    private fun startLivenessSession() {
+    fun startLivenessSession() {
         livenessState.livenessCheckState = LivenessCheckState.Initial.withConnectingMessage()
         attemptCounter.countAttempt()
 
@@ -255,20 +255,17 @@ internal class LivenessCoordinator(
         )
     }
 
-    private fun unbindCamera(context: Context) {
+    fun unbindCamera(context: Context) {
         coordinatorScope.launch(NonCancellable) {
             getCameraProvider(context).unbindAll()
         }
     }
 
-    private fun processCaptureReady() {
+    fun processCaptureReady() {
         encoder.start()
     }
 
-    internal fun processSessionError(
-        faceLivenessException: FaceLivenessDetectionException,
-        stopLivenessSession: Boolean
-    ) {
+    fun processSessionError(faceLivenessException: FaceLivenessDetectionException, stopLivenessSession: Boolean) {
         val webSocketCloseCode = when (faceLivenessException) {
             is FaceLivenessDetectionException.UserCancelledException -> WebSocketCloseCode.CANCELED
             is FaceLivenessDetectionException.FaceInOvalMatchExceededTimeLimitException -> WebSocketCloseCode.TIMEOUT
@@ -304,7 +301,7 @@ internal class LivenessCoordinator(
         }
     }
 
-    private fun processFinalEventsSent() {
+    fun processFinalEventsSent() {
         unbindCamera(context)
     }
 
@@ -325,7 +322,7 @@ internal class LivenessCoordinator(
         coordinatorScope.cancel()
     }
 
-    private suspend fun getCameraProvider(context: Context): ProcessCameraProvider = suspendCoroutine { continuation ->
+    suspend fun getCameraProvider(context: Context): ProcessCameraProvider = suspendCoroutine { continuation ->
         ProcessCameraProvider.getInstance(context).also { cameraProvider ->
             cameraProvider.addListener({
                 continuation.resume(cameraProvider.get())
