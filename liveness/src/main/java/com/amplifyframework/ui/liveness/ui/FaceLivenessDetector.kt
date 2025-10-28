@@ -193,6 +193,8 @@ fun ChallengeView(
     livenessCoordinatorTargetParam: LivenessCoordinatorTargetParam = LivenessCoordinatorTargetParam(
         targetWidthDp = 480.dp,
         targetHeightDp = 640.dp,
+        videoWidth = 480,
+        videoHeight = 640,
         density = LocalDensity.current,
     ),
 ) {

@@ -226,8 +226,8 @@ data class LivenessState(
                 leftEye,
                 rightEye,
                 mouth,
-                livenessCoordinatorTargetParam.targetWidth,
-                livenessCoordinatorTargetParam.targetHeight,
+                livenessCoordinatorTargetParam.videoWidth,
+                livenessCoordinatorTargetParam.videoHeight,
             )
             if (faceDistance >= faceTargetChallenge!!.faceTargetMatching.faceDistanceThresholdMin) {
                 livenessCheckState =

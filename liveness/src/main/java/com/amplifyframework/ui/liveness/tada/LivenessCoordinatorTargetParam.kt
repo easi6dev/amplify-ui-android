@@ -7,6 +7,8 @@ import androidx.compose.ui.unit.Dp
 data class LivenessCoordinatorTargetParam(
     val targetWidthDp: Dp,
     val targetHeightDp: Dp,
+    val videoWidth: Int,
+    val videoHeight: Int,
     val density: Density,
     val targetFpsMin: Int = 24,
     val targetFpsMax: Int = 24,

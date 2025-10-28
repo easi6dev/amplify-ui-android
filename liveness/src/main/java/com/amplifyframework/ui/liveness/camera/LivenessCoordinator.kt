@@ -127,8 +127,8 @@ class LivenessCoordinator(
 
     val encoder = LivenessVideoEncoder.create(
         context = context,
-        width = livenessCoordinatorTargetParam.targetWidth,
-        height = livenessCoordinatorTargetParam.targetHeight,
+        width = livenessCoordinatorTargetParam.videoWidth,
+        height = livenessCoordinatorTargetParam.videoHeight,
         bitrate = livenessCoordinatorTargetParam.targetEncodeBitrate,
         framerate = livenessCoordinatorTargetParam.targetFpsMax,
         keyframeInterval = livenessCoordinatorTargetParam.targetEncodeKeyFrameInternal,
@@ -142,7 +142,7 @@ class LivenessCoordinator(
             attachInputPreview(preview)
             attachOutputSurface(
                 encoder.inputSurface,
-                Size(livenessCoordinatorTargetParam.targetWidth, livenessCoordinatorTargetParam.targetHeight),
+                Size(livenessCoordinatorTargetParam.videoWidth, livenessCoordinatorTargetParam.videoHeight),
                 0
             )
         }
@@ -206,8 +206,8 @@ class LivenessCoordinator(
         attemptCounter.countAttempt()
 
         val faceLivenessSessionInformation = FaceLivenessSessionInformation(
-            videoWidth = livenessCoordinatorTargetParam.targetWidth.toFloat(),
-            videoHeight = livenessCoordinatorTargetParam.targetHeight.toFloat(),
+            videoWidth = livenessCoordinatorTargetParam.videoWidth.toFloat(),
+            videoHeight = livenessCoordinatorTargetParam.videoHeight.toFloat(),
             challengeVersions = listOf(
                 Challenge.FaceMovementAndLightChallenge("2.0.0"),
                 Challenge.FaceMovementChallenge("1.0.0")

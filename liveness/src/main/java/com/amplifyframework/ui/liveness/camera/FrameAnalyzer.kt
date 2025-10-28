@@ -83,19 +83,19 @@ class FrameAnalyzer(context: Context, val livenessState: LivenessState) : ImageA
                     facesFound.firstOrNull()?.let { detectedFace ->
                         val mirrorRectangle = FaceOval.convertMirroredRectangle(
                             detectedFace.location,
-                            livenessState.livenessCoordinatorTargetParam.targetWidth,
+                            livenessState.livenessCoordinatorTargetParam.videoWidth,
                         )
                         val mirroredLeftEye = FaceOval.convertMirroredLandmark(
                             detectedFace.leftEye,
-                            livenessState.livenessCoordinatorTargetParam.targetWidth,
+                            livenessState.livenessCoordinatorTargetParam.videoWidth,
                         )
                         val mirroredRightEye = FaceOval.convertMirroredLandmark(
                             detectedFace.rightEye,
-                            livenessState.livenessCoordinatorTargetParam.targetWidth,
+                            livenessState.livenessCoordinatorTargetParam.videoWidth,
                         )
                         val mirroredMouth = FaceOval.convertMirroredLandmark(
                             detectedFace.mouth,
-                            livenessState.livenessCoordinatorTargetParam.targetWidth,
+                            livenessState.livenessCoordinatorTargetParam.videoWidth,
                         )
 
                         livenessState.onFrameFaceUpdate(
