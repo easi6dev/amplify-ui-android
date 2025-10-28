@@ -27,11 +27,11 @@ import com.amplifyframework.predictions.aws.models.FaceTargetChallengeResponse
 import com.amplifyframework.predictions.aws.models.InitialFaceDetected
 import com.amplifyframework.predictions.models.FaceLivenessSession
 import com.amplifyframework.predictions.models.VideoEvent
-import com.amplifyframework.ui.liveness.camera.LivenessCoordinator
 import com.amplifyframework.ui.liveness.ml.FaceDetector
 import com.amplifyframework.ui.liveness.ml.FaceOval
 import com.amplifyframework.ui.liveness.model.FaceLivenessDetectionException
 import com.amplifyframework.ui.liveness.model.LivenessCheckState
+import com.amplifyframework.ui.liveness.tada.LivenessCoordinatorTargetParam
 import com.amplifyframework.ui.liveness.ui.helper.VideoViewportSize
 import com.amplifyframework.ui.liveness.util.WebSocketCloseCode
 import java.util.Date
@@ -47,7 +47,8 @@ data class LivenessState(
     val disableStartView: Boolean,
     val onCaptureReady: () -> Unit,
     val onSessionError: (FaceLivenessDetectionException, Boolean) -> Unit,
-    val onFinalEventsSent: () -> Unit
+    val onFinalEventsSent: () -> Unit,
+    val livenessCoordinatorTargetParam: LivenessCoordinatorTargetParam,
 ) {
     var videoViewportSize: VideoViewportSize? by mutableStateOf(null)
     var livenessCheckState by mutableStateOf<LivenessCheckState>(
@@ -225,8 +226,8 @@ data class LivenessState(
                 leftEye,
                 rightEye,
                 mouth,
-                LivenessCoordinator.TARGET_WIDTH,
-                LivenessCoordinator.TARGET_HEIGHT
+                livenessCoordinatorTargetParam.targetWidth,
+                livenessCoordinatorTargetParam.targetHeight,
             )
             if (faceDistance >= faceTargetChallenge!!.faceTargetMatching.faceDistanceThresholdMin) {
                 livenessCheckState =

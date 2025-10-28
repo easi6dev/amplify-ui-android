@@ -20,8 +20,6 @@ import android.graphics.RectF
 import androidx.annotation.VisibleForTesting
 import com.amplifyframework.predictions.aws.models.FaceTargetMatchingParameters
 import com.amplifyframework.ui.liveness.R
-import com.amplifyframework.ui.liveness.camera.LivenessCoordinator.Companion.TARGET_HEIGHT
-import com.amplifyframework.ui.liveness.camera.LivenessCoordinator.Companion.TARGET_WIDTH
 import com.amplifyframework.ui.liveness.state.LivenessState
 import java.io.FileInputStream
 import java.nio.channels.FileChannel
@@ -129,20 +127,20 @@ class FaceDetector(val livenessState: LivenessState) {
         val renormalizedDetections = mutableListOf<Detection>()
         weightedDetections.forEach { detection ->
             // Change landmark coordinates to be for actual image size instead of model input size
-            val scaledBottom = (detection.location.bottom / Y_SCALE) * TARGET_HEIGHT
+            val scaledBottom = (detection.location.bottom / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
 
-            val scaledLeftEyeX = (detection.leftEye.x / X_SCALE) * TARGET_WIDTH
-            val scaledLeftEyeY = (detection.leftEye.y / Y_SCALE) * TARGET_HEIGHT
-            val scaledRightEyeX = (detection.rightEye.x / X_SCALE) * TARGET_WIDTH
-            val scaledRightEyeY = (detection.rightEye.y / Y_SCALE) * TARGET_HEIGHT
-            val scaledNoseX = (detection.nose.x / X_SCALE) * TARGET_WIDTH
-            val scaledNoseY = (detection.nose.y / Y_SCALE) * TARGET_HEIGHT
-            val scaledMouthX = (detection.mouth.x / X_SCALE) * TARGET_WIDTH
-            val scaledMouthY = (detection.mouth.y / Y_SCALE) * TARGET_HEIGHT
-            val scaledLeftEarX = (detection.leftEar.x / X_SCALE) * TARGET_WIDTH
-            val scaledLeftEarY = (detection.leftEar.y / Y_SCALE) * TARGET_HEIGHT
-            val scaledRightEarX = (detection.rightEar.x / X_SCALE) * TARGET_WIDTH
-            val scaledRightEarY = (detection.rightEar.y / Y_SCALE) * TARGET_HEIGHT
+            val scaledLeftEyeX = (detection.leftEye.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledLeftEyeY = (detection.leftEye.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
+            val scaledRightEyeX = (detection.rightEye.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledRightEyeY = (detection.rightEye.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
+            val scaledNoseX = (detection.nose.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledNoseY = (detection.nose.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
+            val scaledMouthX = (detection.mouth.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledMouthY = (detection.mouth.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
+            val scaledLeftEarX = (detection.leftEar.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledLeftEarY = (detection.leftEar.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
+            val scaledRightEarX = (detection.rightEar.x / X_SCALE) * livenessState.livenessCoordinatorTargetParam.targetWidth
+            val scaledRightEarY = (detection.rightEar.y / Y_SCALE) * livenessState.livenessCoordinatorTargetParam.targetHeight
 
             val scaledLeftEye = Landmark(scaledLeftEyeX, scaledLeftEyeY)
             val scaledRightEye = Landmark(scaledRightEyeX, scaledRightEyeY)

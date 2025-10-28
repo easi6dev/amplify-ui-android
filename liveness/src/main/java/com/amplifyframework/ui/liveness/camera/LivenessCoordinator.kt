@@ -47,6 +47,7 @@ import com.amplifyframework.ui.liveness.model.FaceLivenessDetectionException
 import com.amplifyframework.ui.liveness.model.LivenessCheckState
 import com.amplifyframework.ui.liveness.state.AttemptCounter
 import com.amplifyframework.ui.liveness.state.LivenessState
+import com.amplifyframework.ui.liveness.tada.LivenessCoordinatorTargetParam
 import com.amplifyframework.ui.liveness.ui.Camera
 import com.amplifyframework.ui.liveness.ui.ChallengeOptions
 import com.amplifyframework.ui.liveness.util.WebSocketCloseCode
@@ -81,7 +82,8 @@ class LivenessCoordinator(
     val disableStartView: Boolean,
     val challengeOptions: ChallengeOptions,
     val onChallengeComplete: OnChallengeComplete,
-    val onChallengeFailed: Consumer<FaceLivenessDetectionException>
+    val onChallengeFailed: Consumer<FaceLivenessDetectionException>,
+    val livenessCoordinatorTargetParam: LivenessCoordinatorTargetParam,
 ) {
 
     val attemptCounter = AttemptCounter()
@@ -94,17 +96,18 @@ class LivenessCoordinator(
         disableStartView = disableStartView,
         onCaptureReady = this::processCaptureReady,
         onSessionError = this::processSessionError,
-        onFinalEventsSent = this::processFinalEventsSent
+        onFinalEventsSent = this::processFinalEventsSent,
+        livenessCoordinatorTargetParam = livenessCoordinatorTargetParam,
     )
 
     val preview = Preview.Builder().apply {
         Camera2Interop.Extender(this).apply {
             setCaptureRequestOption(
                 CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                Range(TARGET_FPS_MIN, TARGET_FPS_MAX)
+                Range(livenessCoordinatorTargetParam.targetFpsMin, livenessCoordinatorTargetParam.targetFpsMax)
             )
         }
-        setTargetResolution(TARGET_RESOLUTION_SIZE)
+        setTargetResolution(livenessCoordinatorTargetParam.targetResolutionSize)
     }.build()
 
     val analyzer = FrameAnalyzer(context, livenessState)
@@ -113,22 +116,22 @@ class LivenessCoordinator(
         Camera2Interop.Extender(this).apply {
             setCaptureRequestOption(
                 CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                Range(TARGET_FPS_MIN, TARGET_FPS_MAX)
+                Range(livenessCoordinatorTargetParam.targetFpsMin, livenessCoordinatorTargetParam.targetFpsMax)
             )
         }
         setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-        setTargetResolution(TARGET_RESOLUTION_SIZE)
+        setTargetResolution(livenessCoordinatorTargetParam.targetResolutionSize)
     }.build().apply {
         setAnalyzer(analysisExecutor, analyzer)
     }
 
     val encoder = LivenessVideoEncoder.create(
         context = context,
-        width = TARGET_WIDTH,
-        height = TARGET_HEIGHT,
-        bitrate = TARGET_ENCODE_BITRATE,
-        framerate = TARGET_FPS_MAX,
-        keyframeInterval = TARGET_ENCODE_KEYFRAME_INTERVAL,
+        width = livenessCoordinatorTargetParam.targetWidth,
+        height = livenessCoordinatorTargetParam.targetHeight,
+        bitrate = livenessCoordinatorTargetParam.targetEncodeBitrate,
+        framerate = livenessCoordinatorTargetParam.targetFpsMax,
+        keyframeInterval = livenessCoordinatorTargetParam.targetEncodeKeyFrameInternal,
         onMuxedSegment = { bytes, time ->
             livenessState.livenessSessionInfo?.sendVideoEvent(VideoEvent(bytes, Date(time)))
         }
@@ -139,7 +142,7 @@ class LivenessCoordinator(
             attachInputPreview(preview)
             attachOutputSurface(
                 encoder.inputSurface,
-                Size(TARGET_WIDTH, TARGET_HEIGHT),
+                Size(livenessCoordinatorTargetParam.targetWidth, livenessCoordinatorTargetParam.targetHeight),
                 0
             )
         }
@@ -203,8 +206,8 @@ class LivenessCoordinator(
         attemptCounter.countAttempt()
 
         val faceLivenessSessionInformation = FaceLivenessSessionInformation(
-            videoWidth = TARGET_WIDTH.toFloat(),
-            videoHeight = TARGET_HEIGHT.toFloat(),
+            videoWidth = livenessCoordinatorTargetParam.targetWidth.toFloat(),
+            videoHeight = livenessCoordinatorTargetParam.targetHeight.toFloat(),
             challengeVersions = listOf(
                 Challenge.FaceMovementAndLightChallenge("2.0.0"),
                 Challenge.FaceMovementChallenge("1.0.0")

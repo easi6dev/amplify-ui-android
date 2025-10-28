@@ -64,6 +64,7 @@ import com.amplifyframework.ui.liveness.camera.OnChallengeComplete
 import com.amplifyframework.ui.liveness.ml.FaceDetector
 import com.amplifyframework.ui.liveness.model.FaceLivenessDetectionException
 import com.amplifyframework.ui.liveness.model.LivenessCheckState
+import com.amplifyframework.ui.liveness.tada.LivenessCoordinatorTargetParam
 import com.amplifyframework.ui.liveness.ui.helper.VideoViewportSize
 import com.amplifyframework.ui.liveness.util.hasCameraPermission
 import kotlinx.coroutines.launch
@@ -188,7 +189,12 @@ fun ChallengeView(
     disableStartView: Boolean,
     challengeOptions: ChallengeOptions,
     onChallengeComplete: OnChallengeComplete,
-    onChallengeFailed: Consumer<FaceLivenessDetectionException>
+    onChallengeFailed: Consumer<FaceLivenessDetectionException>,
+    livenessCoordinatorTargetParam: LivenessCoordinatorTargetParam = LivenessCoordinatorTargetParam(
+        targetWidthDp = 480.dp,
+        targetHeightDp = 640.dp,
+        density = LocalDensity.current,
+    ),
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -209,7 +215,8 @@ fun ChallengeView(
                 disableStartView,
                 challengeOptions,
                 onChallengeComplete = { currentOnChallengeComplete() },
-                onChallengeFailed = { currentOnChallengeFailed.accept(it) }
+                onChallengeFailed = { currentOnChallengeFailed.accept(it) },
+                livenessCoordinatorTargetParam = livenessCoordinatorTargetParam,
             )
         } catch (e: Exception) {
             currentOnChallengeFailed.accept(
