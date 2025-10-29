@@ -16,6 +16,7 @@
 package com.amplifyframework.ui.liveness.ui
 
 import android.graphics.RectF
+import android.util.Size
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -195,6 +196,11 @@ fun ChallengeView(
         targetHeightDp = 640.dp,
         videoWidth = 480,
         videoHeight = 640,
+        videoResolutionSize = Size(
+            480,
+            640,
+        ),
+        targetAspectRatio = 480.toFloat() / 640.toFloat(),
         density = LocalDensity.current,
     ),
 ) {
