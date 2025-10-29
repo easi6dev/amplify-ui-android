@@ -107,7 +107,7 @@ class LivenessCoordinator(
                 Range(livenessCoordinatorTargetParam.targetFpsMin, livenessCoordinatorTargetParam.targetFpsMax)
             )
         }
-        setTargetResolution(livenessCoordinatorTargetParam.targetResolutionSize)
+        setTargetResolution(livenessCoordinatorTargetParam.videoResolutionSize)
     }.build()
 
     val analyzer = FrameAnalyzer(context, livenessState)
@@ -120,7 +120,7 @@ class LivenessCoordinator(
             )
         }
         setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-        setTargetResolution(livenessCoordinatorTargetParam.targetResolutionSize)
+        setTargetResolution(livenessCoordinatorTargetParam.videoResolutionSize)
     }.build().apply {
         setAnalyzer(analysisExecutor, analyzer)
     }
